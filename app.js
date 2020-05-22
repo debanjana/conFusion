@@ -10,6 +10,10 @@ var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate')
 
+// jwt token 
+var config = require('./config');
+
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,7 +25,10 @@ const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes');
 
-const url = 'mongodb://localhost:27017/conFusion';
+
+// this is commenthed when we start using JWT token for authentication
+//const url = 'mongodb://localhost:27017/conFusion';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 connect.then((db) => {
@@ -39,13 +46,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(session({
-  name: 'session-id',
-  secret: '12345-67890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
+
+// removing session while using JWT Token
+// app.use(session({
+//   name: 'session-id',
+//   secret: '12345-67890-09876-54321',
+//   saveUninitialized: false,
+//   resave: false,
+//   store: new FileStore()
+// }));
 
 
 /* explanation for passport usage:
@@ -69,11 +78,13 @@ So, that is how the passport session itself is organized.
 
 // auth using passport
 app.use(passport.initialize());
-app.use(passport.session());
+// commented while using JWT Token to auntheticate
+// app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-function auth(req, res, next) {
+// commenting to use jwt token for authorization
+/*function auth(req, res, next) {
   console.log(req.user);
 
   if (!req.user) {
@@ -85,7 +96,7 @@ function auth(req, res, next) {
     next();
   }
 }
-
+*/
 
 // use user route to signup and logout a user 
 // cookie and session logic
@@ -204,7 +215,9 @@ app.use('/users', usersRouter);
   }
 
   */
-app.use(auth);
+
+// commented this statement while using JWT to authenticate
+//app.use(auth);
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -231,3 +244,6 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
+
+
+/*token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWM1ZjA5OTkwMzhhNGEwYTg3NDNiNWIiLCJpYXQiOjE1OTAxMjI3NTgsImV4cCI6MTU5MDEyNjM1OH0.kX-6gLZNiLeMrRkHCZGuKe7Y6e6p6Q7FQVjbbB4LV5s  */

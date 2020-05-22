@@ -7,6 +7,9 @@ var User = require('../models/user');
 //passport
 var passport = require('passport');
 
+// using jwt token
+var authenticate = require('../authenticate');
+
 
 
 
@@ -37,11 +40,25 @@ router.post('/signup', (req, res, next) => {
   });
 });
 
+// login using jwt token
 router.post('/login', passport.authenticate('local'), (req, res) => {
+
+  var token = authenticate.getToken({_id: req.user._id});
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.json({success: true, token: token, status: 'You are successfully logged in!'});
+});
+
+
+
+
+
+// login using passport authentication - no jwt token
+/*router.post('/login', passport.authenticate('local'), (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.json({success: true, status: 'You are successfully logged in!'});
-});
+});*/
 
 
 
