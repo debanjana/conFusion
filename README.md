@@ -4,3 +4,8 @@
 Steps : 
    1. Develop a full-fledged REST API server with Express, MongoDB and Mongoose
   2. Serve up various REST API end points together with interaction with the MongoDB server.
+  
+  
+  Command to update database properties directly in db
+  
+ ```db.users.update({"username":"admin"}, {$set: {"admin":true}})```
