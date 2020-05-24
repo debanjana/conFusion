@@ -21,12 +21,14 @@ salt and hash is used
     
     */
 
-var User = new Schema({
+// user scema while using JWT Token    
+/*var User = new Schema({
   admin:   {
       type: Boolean,
       default: false
   }
 });
+*/
 
 // var User = new Schema({
 //     username: {
@@ -43,6 +45,23 @@ var User = new Schema({
 //         default: false
 //     }
 // });
+
+
+// user Schema while using Mongoose Population
+var User = new Schema({
+  firstname: {
+    type: String,
+      default: ''
+  },
+  lastname: {
+    type: String,
+      default: ''
+  },
+  admin:   {
+      type: Boolean,
+      default: false
+  }
+});
 
 User.plugin(passportLocalMongoose);
 
