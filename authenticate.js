@@ -55,3 +55,14 @@ If this is successful,
 it will allow me to proceed
 */
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+exports.verifyAdmin = function(req, res, next){
+    if (!req.user.admin) {
+        var err = new Error('You are not authenticated!');
+        err.status = 403;
+        next(err);
+      }
+      else {
+        next();
+      }
+};

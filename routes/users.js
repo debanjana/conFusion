@@ -14,9 +14,16 @@ var authenticate = require('../authenticate');
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.route('/')
+  .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    User.find({})
+      .then((users) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(users);
+      })
+    
+  });
 
 
 
@@ -43,42 +50,42 @@ router.use(bodyParser.json());
 
 // sign up route while using mongoose population
 router.post('/signup', (req, res, next) => {
-  User.register(new User({username: req.body.username}), 
+  User.register(new User({ username: req.body.username }),
     req.body.password, (err, user) => {
-    if(err) {
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});
-    }
-    else {
-      if (req.body.firstname)
-        user.firstname = req.body.firstname;
-      if (req.body.lastname)
-        user.lastname = req.body.lastname;
-      user.save((err, user) => {
-        if (err) {
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({err: err});
-          return ;
-        }
-        passport.authenticate('local')(req, res, () => {
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, status: 'Registration Successful!'});
+      if (err) {
+        res.statusCode = 500;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ err: err });
+      }
+      else {
+        if (req.body.firstname)
+          user.firstname = req.body.firstname;
+        if (req.body.lastname)
+          user.lastname = req.body.lastname;
+        user.save((err, user) => {
+          if (err) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({ err: err });
+            return;
+          }
+          passport.authenticate('local')(req, res, () => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({ success: true, status: 'Registration Successful!' });
+          });
         });
-      });
-    }
-  });
+      }
+    });
 });
 
 // login using jwt token
 router.post('/login', passport.authenticate('local'), (req, res) => {
 
-  var token = authenticate.getToken({_id: req.user._id});
+  var token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.json({success: true, token: token, status: 'You are successfully logged in!'});
+  res.json({ success: true, token: token, status: 'You are successfully logged in!' });
 });
 
 
@@ -123,18 +130,18 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 
 //   if(!req.session.user) {
 //     var authHeader = req.headers.authorization;
-    
+
 //     if (!authHeader) {
 //       var err = new Error('You are not authenticated!');
 //       res.setHeader('WWW-Authenticate', 'Basic');
 //       err.status = 401;
 //       return next(err);
 //     }
-  
+
 //     var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
 //     var username = auth[0];
 //     var password = auth[1];
-  
+
 //     User.findOne({username: username})
 //     .then((user) => {
 //       if (user === null) {
