@@ -22,19 +22,19 @@ const imageFileFilter = (req, file, cb) => {
     }
     cb(null, true);
 };
-
+const upload = multer({ storage: storage, fileFilter: imageFileFilter});
 
 const uploadRouter = express.Router();
 
-uploadRouter.use(bodyParser.json());;
+uploadRouter.use(bodyParser.json());
 
 
 uploadRouter.route('/')
-.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+.get(authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end('GET operation not supported on /imageUpload');
 })
-.post(authenticate.verifyUser, authenticate.verifyAdmin, upload.single('imageFile'), (req, res) => {
+.post( upload.single('imageFile'), (req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json(req.file);
