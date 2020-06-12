@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 // model
 const Leaders = require('../models/leaders');
 
+// uisng JWT token to authenticate and verify
+var authenticate = require('../authenticate');
+
 const leaderRouter = express.Router();
 leaderRouter.use(bodyParser.json());
 
@@ -19,7 +22,7 @@ leaderRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Leaders.create(req.body) // model.create
     .then((leader) => {
         console.log('leader Created ', leader);
@@ -29,11 +32,11 @@ leaderRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /Leaders');
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Leaders.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -53,11 +56,11 @@ leaderRouter.route('/:leaderId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /Leaders/'+ req.params.leaderId);
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Leaders.findByIdAndUpdate(req.params.leaderId, {
         $set: req.body
     }, { new: true })
@@ -68,7 +71,7 @@ leaderRouter.route('/:leaderId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Leaders.findByIdAndRemove(req.params.leaderId)
     .then((resp) => {
         res.statusCode = 200;

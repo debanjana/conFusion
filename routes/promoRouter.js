@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 // model
 const Promos = require('../models/promotions');
+// uisng JWT token to authenticate and verify
+var authenticate = require('../authenticate');
 
 const promoRouter = express.Router();
 promoRouter.use(bodyParser.json());
@@ -18,7 +20,7 @@ promoRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Promos.create(req.body) // model.create
     .then((promo) => {
         console.log('promo Created ', promo);
@@ -28,11 +30,11 @@ promoRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /Promos');
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Promos.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -52,11 +54,11 @@ promoRouter.route('/:promoId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /Promos/'+ req.params.promoId);
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Promos.findByIdAndUpdate(req.params.promoId, {
         $set: req.body
     }, { new: true })
@@ -67,7 +69,7 @@ promoRouter.route('/:promoId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Promos.findByIdAndRemove(req.params.promoId)
     .then((resp) => {
         res.statusCode = 200;
@@ -76,67 +78,4 @@ promoRouter.route('/:promoId')
     }, (err) => next(err))
     .catch((err) => next(err));
 });
-
-
-// promoRouter.route('/')
-// // /promos all
-// .all((req,res,next)=>{
-//     res.status = 200;
-//     res.setHeader('Content-Type', 'text/plain');
-//     next();
-// })
-
-// // promos get
-// .get((req, res, next) =>{
-//     res.end('Will send all the promos to you');
-// })
-
-// // promos post
-// .post( (req, res, next) => {
-//     res.end('Will add the promo: ' + req.body.name + ' with details: ' + req.body.description);
-//    })
-
-// // promos put
-// .put((req, res, next) =>{
-//     res.statusCode = 403;
-//     res.end('PUT operation not supported');
-// })
-
-// // promos deleting 
-// .delete((req, res, next) =>{
-//     res.end('deleting all promos');
-// });
-
-// // new route for /promos/:promoID
-
-// promoRouter.route('/:promoID')
-// .all((req,res,next)=>{
-//     res.status = 200;
-//     res.setHeader('Content-Type', 'text/plain');
-//     next();
-// })
-
-// // promos get
-// .get((req, res, next) =>{
-//     res.end('Will send ' + req.params.promoID + ' the promos to you');
-// })
-
-// // promos/:promoID post
-// .post((req, res, next) =>{
-//     res.statusCode = 403;
-//     res.end('POST operation not supported');
-// })
-
-// // promos put
-// .put((req, res, next) =>{
-//     res.write('Updating promo : '+  req.params.promoID + '\n');
-//     res.end('Updating promo '+ req.body.name  + ' with details '+ req.body.description);
-// })
-
-// // promos deleting 
-// .delete((req, res, next) =>{
-//     res.end('deleting promo ' + req.params.promoID);
-// });
-
-
 module.exports = promoRouter;
