@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 // model
 const Promos = require('../models/promotions');
+// uisng JWT token to authenticate and verify
+var authenticate = require('../authenticate');
 
 const promoRouter = express.Router();
 promoRouter.use(bodyParser.json());

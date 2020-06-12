@@ -43,17 +43,7 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
         });
     }));
 
-// token based auth - so no session - session false
-/* verifyUser,
-which calls upon the passport authenticate with JWT.
-So, this one uses the token that
-comes in the authentication header and then verifies the user.
-So, anytime I want to verify the user's authenticity,
-I can simply call verify user,
-and that will initiate the call to the passport.authenticate and verify the sser.
-If this is successful,
-it will allow me to proceed
-*/
+
 exports.verifyUser = passport.authenticate('jwt', {session: false});
 
 exports.verifyAdmin = function(req, res, next){
