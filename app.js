@@ -62,16 +62,6 @@ app.use(express.urlencoded({ extended: false }));
 
 
 
-// removing session while using JWT Token
-// app.use(session({
-//   name: 'session-id',
-//   secret: '12345-67890-09876-54321',
-//   saveUninitialized: false,
-//   resave: false,
-//   store: new FileStore()
-// }));
-
-
 /* explanation for passport usage:
 f the user is logged in,
 then what happens is that when the session is initiated again,
@@ -98,141 +88,7 @@ app.use(passport.initialize());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// commenting to use jwt token for authorization
-/*function auth(req, res, next) {
-  console.log(req.user);
 
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    next(err);
-  }
-  else {
-    next();
-  }
-}
-*/
-
-// use user route to signup and logout a user 
-// cookie and session logic
-/*
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-function auth (req, res, next) {
-  console.log(req.session);
-
-if(!req.session.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    return next(err);
-}
-else {
-  if (req.session.user === 'authenticated') {
-    next();
-  }
-  else {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    return next(err);
-  }
-}
-}
-*/
-
-
-// cookie logic 
-
-/*app.use(cookieParser('12345-67890-09876-54321'));
-
-function auth (req, res, next) {
-
-  if (!req.signedCookies.user) { // first time when no cookie exists
-    var authHeader = req.headers.authorization;
-    if (!authHeader) {
-        var err = new Error('You are not authenticated!');
-        res.setHeader('WWW-Authenticate', 'Basic');              
-        err.status = 401;
-        next(err);
-        return;
-    }
-    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
-    var user = auth[0];
-    var pass = auth[1];
-    if (user == 'admin' && pass == 'password') {
-        res.cookie('user','admin',{signed: true});
-        next(); // authorized
-    } else {
-        var err = new Error('You are not authenticated!');
-        res.setHeader('WWW-Authenticate', 'Basic');              
-        err.status = 401;
-        next(err);
-    }
-  }
-  else {
-      if (req.signedCookies.user === 'admin') { // when cookie exists
-          next();
-      }
-      else {
-          var err = new Error('You are not authenticated!');
-          err.status = 401;
-          next(err);
-      }
-  }
-}
-
-*/
-
-// basic auth logic
-
-/*
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
-  
-  function auth (req, res, next) {
-      console.log(req.session);
-  
-      if (!req.session.user) {
-          var authHeader = req.headers.authorization;
-          if (!authHeader) {
-              var err = new Error('You are not authenticated!');
-              res.setHeader('WWW-Authenticate', 'Basic');                        
-              err.status = 401;
-              next(err);
-              return;
-          }
-          var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
-          var user = auth[0];
-          var pass = auth[1];
-          if (user == 'admin' && pass == 'password') {
-              req.session.user = 'admin';
-              next(); // authorized
-          } else {
-              var err = new Error('You are not authenticated!');
-              res.setHeader('WWW-Authenticate', 'Basic');
-              err.status = 401;
-              next(err);
-          }
-      }
-      else {
-          if (req.session.user === 'admin') {
-              console.log('req.session: ',req.session);
-              next();
-          }
-          else {
-              var err = new Error('You are not authenticated!');
-              err.status = 401;
-              next(err);
-          }
-      }
-  }
-
-  */
-
-// commented this statement while using JWT to authenticate
-//app.use(auth);
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -261,6 +117,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
-
-
-/*token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWM1ZjA5OTkwMzhhNGEwYTg3NDNiNWIiLCJpYXQiOjE1OTAxMjI3NTgsImV4cCI6MTU5MDEyNjM1OH0.kX-6gLZNiLeMrRkHCZGuKe7Y6e6p6Q7FQVjbbB4LV5s  */
